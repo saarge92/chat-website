@@ -1,8 +1,10 @@
 import {UserInfo} from "../dto/user-info.dto";
-import {Injectable} from "@decorators/di";
+import {Inject, Injectable} from "@decorators/di";
 import {IUser, UserModel} from "../models/user-model";
 import bcrypt from "bcrypt";
 import HttpException from "../exceptions/http-exception";
+import {LoginInfo} from "../dto/login-info";
+import {JwtService} from "./jwt-service";
 
 /**
  * Service for working with users
@@ -11,6 +13,9 @@ import HttpException from "../exceptions/http-exception";
 @Injectable()
 export class UserService {
     private readonly salt: number = 10;
+
+    constructor(@Inject(JwtService) private readonly jwtService: JwtService) {
+    }
 
     /**
      * Register user in database
@@ -25,6 +30,7 @@ export class UserService {
             });
             return {
                 email: createdUser.email,
+                id: createdUser._id,
                 created_at: createdUser.created_at
             };
         }
@@ -36,15 +42,34 @@ export class UserService {
      * @param email Email of user
      */
     public async getUserByEmail(email: string): Promise<IUser> {
-        return Promise.resolve(UserModel.find({email}).findOne());
+        return UserModel.find({email}).findOne().lean();
     }
 
     /**
      * Check if user exists
-     * @param email
+     * @param email Email of requested user
      */
     public async userExistByEmail(email: string): Promise<boolean> {
         const userByEmail = await this.getUserByEmail(email);
         return userByEmail !== null && userByEmail !== undefined;
+    }
+
+    /**
+     * Login user in system
+     * @param userInfo users email & password for checking
+     * @returns {Promise<any>} Returns async result with token &  email user
+     */
+    public async userLogin(userInfo: LoginInfo): Promise<any> {
+        const user = await this.getUserByEmail(userInfo.email);
+        if (!user) throw new HttpException(400, "Неверный логин или пароль");
+        const isPasswordCorrect = bcrypt.compareSync(userInfo.password, user.password);
+        if (isPasswordCorrect) {
+            const token = await this.jwtService.signUser(user);
+            return {
+                token,
+                email: user.email
+            };
+        }
+        throw new HttpException(400, "Неверный логин или пароль");
     }
 }

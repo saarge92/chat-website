@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, {Schema, Types} from "mongoose";
 
 const UserSchema: Schema = new Schema<any>({
     email: {required: true, unique: true, type: String},
@@ -11,7 +11,8 @@ export interface IUser extends Document {
     email: string;
     created_at: Date,
     password: string,
-    updated_at: Date
+    updated_at: Date,
+    _id: Types.ObjectId
 }
 
 // @ts-ignore

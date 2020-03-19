@@ -5,6 +5,7 @@ import userRoutes from "./routes/user";
 import mongoose from "mongoose";
 import "dotenv/config"
 import errorMiddleware from "./middleware/error.middleware";
+import rolesRoutes from "./routes/user/roles";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -22,14 +23,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
-app.get('*', (request: express.Request, response: express.Response) => {
+app.use("/api/", userRoutes);
+app.use("/api/", rolesRoutes);
+app.use(errorMiddleware);
+app.use('*', (request: express.Request, response: express.Response) => {
     response.json({message: 'Not Found'}).status(404);
 });
-
-app.use("/api/", userRoutes);
-
-app.use(errorMiddleware);
 
 app.listen(PORT, () => {
     console.log('Server Started')
 });
+

@@ -4,6 +4,7 @@ import {transformAndValidate} from "class-transformer-validator";
 import {UserInfo} from "../dto/user-info.dto";
 import {UserService} from "../services/user-service";
 import {Inject} from "@decorators/di";
+import {LoginInfo} from "../dto/login-info";
 
 
 /**
@@ -28,5 +29,19 @@ export class UserController {
         });
         const createdUser = await this.userService.registerUser(userInfo as UserInfo);
         return response.json({...createdUser}).status(200);
+    }
+
+    /**
+     * Login user in system
+     * @param request Http Request
+     * @param response Http Response
+     */
+    @Post("/login")
+    public async loginUser(request: express.Request, response: express.Response) {
+        const userInfo = await transformAndValidate(LoginInfo, request.body).catch(error => {
+            response.status(400).json({message: error});
+        });
+        const userData = await this.userService.userLogin(userInfo as LoginInfo);
+        return response.json(userData).status(200)
     }
 }
