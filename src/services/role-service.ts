@@ -3,6 +3,8 @@ import {RoleInfo} from "../dto/role-info";
 import {IRole, RoleModel} from "../models/roles-model";
 import HttpException from "../exceptions/http-exception";
 import {Schema, Types} from "mongoose";
+import {UserRoleDto} from "../dto/user-role.dto";
+import {UserModel} from "../models/user-model";
 
 @Injectable()
 export class RoleService {
@@ -54,4 +56,14 @@ export class RoleService {
         return RoleModel.findOne({_id: id}).lean();
     }
 
+    /**
+     * Assign Role To user
+     * @param userRoleDto Object dto about roles assignation
+     */
+    public async assignRoleToUser(userRoleDto: UserRoleDto): Promise<any> {
+        const role = await this.findRoleById(userRoleDto.role_id);
+        if (!role) throw new HttpException(400, "Такой роли не существует в базе");
+        const isUpdated = await UserModel.updateOne({_id: userRoleDto.user_id}, {$push: {roles: userRoleDto.role_id}}).lean();
+        return isUpdated;
+    }
 }

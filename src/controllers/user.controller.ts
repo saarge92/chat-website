@@ -11,7 +11,7 @@ import {LoginInfo} from "../dto/login-info";
  * Controller for serving requests about users
  * @copyright Serdar Durdyev
  */
-@Controller('/user')
+@Controller("/user")
 export class UserController {
     constructor(@Inject(UserService) private readonly userService: UserService) {
     }
@@ -22,7 +22,7 @@ export class UserController {
      * @param response HTTP-Response
      * @returns {Promise<any>} Возвращает данные созданного пользователя
      */
-    @Post('/')
+    @Post("/")
     public async registerUser(request: express.Request, response: express.Response) {
         const userInfo = await transformAndValidate<UserInfo>(UserInfo, request.body).catch(error => {
             response.status(400).json({message: error})
