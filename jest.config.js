@@ -125,7 +125,7 @@ module.exports = {
     // setupFiles: [],
 
     // A list of paths to modules that run some code to configure or set up the testing framework before each test
-    // setupFilesAfterEnv: [],
+    //setupFilesAfterEnv: ['./jest.setup.js'],
 
     // A list of paths to snapshot serializer modules Jest should use for snapshot testing
     // snapshotSerializers: [],
@@ -133,6 +133,7 @@ module.exports = {
     // The test environment that will be used for testing
     testEnvironment: "node",
 
+    testTimeout: 30000,
     // Options that will be passed to the testEnvironment
     // testEnvironmentOptions: {},
 
@@ -185,5 +186,5 @@ module.exports = {
     // watchPathIgnorePatterns: [],
 
     // Whether to use watchman for file crawling
-    // watchman: true,
+     watchman: true,
 };

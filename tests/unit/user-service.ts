@@ -8,22 +8,23 @@ import * as faker from "faker";
 
 describe("User Service TEST", () => {
     let userService;
-    beforeAll(() => {
-        jest.setTimeout(5000);
-    })
 
     beforeEach(() => {
+        jest.setTimeout(10000);
         const jwtService = new JwtService();
         userService = new UserService(jwtService)
     });
 
-    test("should return createdUser", async (done) => {
+    test("should return createdUser", async () => {
         const userDto: UserInfo = {
             email: faker.email,
             password: faker.password
         }
         const result = await userService.registerUser(userDto);
         expect(result).toBeDefined();
-        done();
+    });
+
+    beforeAll((done) => {
+        done(); // calling it
     });
 })
