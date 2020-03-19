@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    // "incremental": true,                   /* Enable incremental compilation */
+    "incremental": true,                   /* Enable incremental compilation */
     "target": "es2017",
     /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
     "module": "commonjs",
@@ -77,6 +77,7 @@
   },
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests/**/*.ts",
   ]
 }
