@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import HttpException from "../exceptions/http-exception";
 import {LoginInfo} from "../dto/login-info";
 import {JwtService} from "./jwt-service";
+import {RoleService} from "./role-service";
 
 /**
  * Service for working with users
@@ -14,7 +15,8 @@ import {JwtService} from "./jwt-service";
 export class UserService {
     private readonly salt: number = 10;
 
-    constructor(@Inject(JwtService) private readonly jwtService: JwtService) {
+    constructor(@Inject(JwtService) private readonly jwtService: JwtService,
+                @Inject(RoleService) private readonly roleService: RoleService) {
     }
 
     /**
@@ -23,8 +25,15 @@ export class UserService {
      */
     public async registerUser(userInfo: UserInfo): Promise<any> {
         const userExists = await this.userExistByEmail(userInfo.email);
+        let createdUser: any = {};
         if (!userExists) {
-            const createdUser = await UserModel.create({
+            const userRole = await this.roleService.getRoleByName("admin");
+            if (userRole) createdUser = await UserModel.create({
+                email: userInfo.email,
+                password: bcrypt.hashSync(userInfo.password, this.salt),
+                roles: [userRole._id]
+            });
+            else createdUser = await UserModel.create({
                 email: userInfo.email,
                 password: bcrypt.hashSync(userInfo.password, this.salt)
             });

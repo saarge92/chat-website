@@ -23,7 +23,7 @@ export class RoleService {
      * Get role by name
      * @param name Name for searching
      */
-    public async getUserByName(name: string): Promise<IRole> {
+    public async getRoleByName(name: string): Promise<IRole> {
         const role = await RoleModel.findOne({name}).lean()
         return role;
     }
@@ -34,7 +34,7 @@ export class RoleService {
      * @returns {boolean} Returns true or false if exists
      */
     public async isRoleExistedInDatabase(name: string): Promise<boolean> {
-        return await this.getUserByName(name) != null;
+        return await this.getRoleByName(name) != null;
     }
 
     /**
@@ -47,10 +47,11 @@ export class RoleService {
     }
 
     /**
-     * Delete
-     * @param id
+     * Find role by id
+     * @param id Id of searched role
      */
     public async findRoleById(id: string): Promise<IRole> {
         return RoleModel.findOne({_id: id}).lean();
     }
+
 }
