@@ -1,36 +1,63 @@
-import express, {json} from "express";
+import express, {Express} from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import userRoutes from "./routes/user";
 import mongoose from "mongoose";
+import * as socketServer from "socket.io";
 import "dotenv/config"
 import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
 
-const app = express();
-const PORT = process.env.PORT;
-const MONGO_URI = process.env.MONGO_URI;
+class ServerApplication {
+    private app: Express;
+    private PORT = process.env.PORT;
+    private MONGO_URI = process.env.MONGO_URI;
+    private socket: socketServer.Server;
 
-mongoose.Promise = global.Promise;
+    constructor() {
+        this.app = express();
+    }
 
-// @ts-ignore
-mongoose.connect(MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
-    console.log('Mongoose connected')
-});
+    private initMiddleware() {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({extended: true}));
+        this.app.use(cors());
+    }
 
+    private initRoutes() {
+        this.app.use("/api/", userRoutes);
+        this.app.use("/api/", rolesRoutes);
+        this.app.use(errorMiddleware);
+        this.app.use("*", (request: express.Request, response: express.Response) => {
+            response.json({message: "Not Found"}).status(404);
+        });
+    }
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cors());
+    private mongooseConnect() {
+        mongoose.Promise = global.Promise;
+        // @ts-ignore
+        mongoose.connect(this.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
+            console.log("Mongoose connected")
+        });
+    }
 
-app.use("/api/", userRoutes);
-app.use("/api/", rolesRoutes);
-app.use(errorMiddleware);
-app.use('*', (request: express.Request, response: express.Response) => {
-    response.json({message: 'Not Found'}).status(404);
-});
+    private socketInit() {
+        this.socket = socketServer.listen(9090);
+        this.socket.on("connection", (socket) => {
+            socket.emit("server", {data: "Hello from server"})
+        })
+    }
 
-app.listen(PORT, () => {
-    console.log('Server Started')
-});
+    public start() {
+        this.app.listen(this.PORT, () => {
+            console.log("Server Started")
+        });
+        this.initMiddleware();
+        this.initRoutes();
+        this.mongooseConnect();
+        this.socketInit();
+    }
+}
 
+const newServer = new ServerApplication();
+newServer.start();

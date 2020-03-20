@@ -12,7 +12,7 @@ import {AdminMiddleware} from "../middleware/is-admin.middleware";
  * Contains basic routes for CRUD operations with roles
  * @copyright Serdar Durdyev
  */
-@Controller("/roles")
+@Controller("/roles", [AdminMiddleware])
 export class RoleController {
     constructor(@Inject(RoleService) private readonly roleService: RoleService) {
     }
@@ -63,7 +63,7 @@ export class RoleController {
      * @param request Body of requests with role & user
      * @param response Response for user with result operation
      */
-    @Post("/assign", [AdminMiddleware])
+    @Post("/assign")
     public async assingnUserToRole(request: express.Request, response: express.Response) {
         const assignInfo = await transformAndValidate(UserRoleDto, request.body).catch((error) => {
             return response.json({message: error}).status(400);
