@@ -9,6 +9,7 @@ import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
 import {Socket} from "socket.io";
 import {authMiddlewareWebsocket} from "./middleware/websockets/auth-middleware";
+import messageRoutes from "./routes/message/message-route";
 
 class ServerApplication {
     private app: Express;
@@ -29,6 +30,7 @@ class ServerApplication {
     private initRoutes() {
         this.app.use("/api/", userRoutes);
         this.app.use("/api/", rolesRoutes);
+        this.app.use("/api/", messageRoutes)
         this.app.use(errorMiddleware);
         this.app.use("*", (request: express.Request, response: express.Response) => {
             response.json({message: "Not Found"}).status(404);
