@@ -7,6 +7,8 @@ import * as socketServer from "socket.io";
 import "dotenv/config"
 import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
+import {Socket} from "socket.io";
+import {authMiddlewareWebsocket} from "./middleware/websockets/auth-middleware";
 
 class ServerApplication {
     private app: Express;
@@ -43,8 +45,8 @@ class ServerApplication {
 
     private socketInit() {
         this.socket = socketServer.listen(9090);
-        this.socket.on("connection", (socket) => {
-            socket.emit("server", {data: "Hello from server"})
+        this.socket.of("/chat").use(authMiddlewareWebsocket).on("connection", (socket) => {
+            socket.emit("server", {data: "Hello from DMASTERS"})
         })
     }
 
