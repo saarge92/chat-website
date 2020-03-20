@@ -5,6 +5,7 @@ import {RoleInfo} from "../dto/role-info";
 import {Inject} from "@decorators/di";
 import {RoleService} from "../services/role-service";
 import {UserRoleDto} from "../dto/user-role.dto";
+import {AdminMiddleware} from "../middleware/is-admin.middleware";
 
 /**
  * Controller for working with roles in database
@@ -62,12 +63,14 @@ export class RoleController {
      * @param request Body of requests with role & user
      * @param response Response for user with result operation
      */
-    @Post("/assign")
+    @Post("/assign", [AdminMiddleware])
     public async assingnUserToRole(request: express.Request, response: express.Response) {
         const assignInfo = await transformAndValidate(UserRoleDto, request.body).catch((error) => {
             return response.json({message: error}).status(400);
         });
+
         const isUpdated: any = await this.roleService.assignRoleToUser(assignInfo as UserRoleDto);
+
         if (isUpdated.ok == 1) return response.json({message: "Успешно обновлено"}).status(200)
         else return response.json({message: "Что-то пошло не так"}).status(409)
     }
