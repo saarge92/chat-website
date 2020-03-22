@@ -3,19 +3,17 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import userRoutes from "./routes/user";
 import mongoose from "mongoose";
-import * as socketServer from "socket.io";
 import "dotenv/config"
 import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
-import {Socket} from "socket.io";
 import {authMiddlewareWebsocket} from "./middleware/websockets/auth-middleware";
 import messageRoutes from "./routes/message/message-route";
+import {WebsocketServer} from "./websocket/websocket.server";
 
 class ServerApplication {
     private app: Express;
     private PORT = process.env.PORT;
     private MONGO_URI = process.env.MONGO_URI;
-    private socket: socketServer.Server;
 
     constructor() {
         this.app = express();
@@ -45,13 +43,6 @@ class ServerApplication {
         });
     }
 
-    private socketInit() {
-        this.socket = socketServer.listen(9090);
-        this.socket.of("/chat").use(authMiddlewareWebsocket).on("connection", (socket) => {
-            socket.emit("server", {data: "Hello from DMASTERS"})
-        })
-    }
-
     public start() {
         this.app.listen(this.PORT, () => {
             console.log("Server Started")
@@ -59,7 +50,7 @@ class ServerApplication {
         this.initMiddleware();
         this.initRoutes();
         this.mongooseConnect();
-        this.socketInit();
+        WebsocketServer.init();
     }
 }
 

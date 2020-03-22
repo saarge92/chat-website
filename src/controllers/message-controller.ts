@@ -5,18 +5,32 @@ import {MessageDto} from "../dto/message-dto";
 import {AuthMiddleware} from "../middleware/auth-middleware";
 import {Inject} from "@decorators/di";
 import {MessageService} from "../services/message-service";
+import {WebsocketServer} from "../websocket/websocket.server";
 
+/**
+ * Controller for sending messages users each others
+ * @copyright Serdar Durdyev
+ */
 @Controller("/messages", [AuthMiddleware])
 export class MessageController {
     constructor(@Inject(MessageService) private readonly messageService: MessageService) {
     }
 
+    /**
+     * Sending messaging user to another user
+     * @param request Request contains data
+     * @param response Response for user after sending information
+     */
     @Post("/")
     public async messagePost(request: Request, response: Response) {
         const message = await transformAndValidate(MessageDto, request.body).catch((error) => {
             return response.json({message: error}).status(400);
         });
         const newMessage = await this.messageService.sendMessage(message as MessageDto, request.app.locals.user._id);
+        WebsocketServer.server.of("/chat").to(`private-chat-${newMessage.sender}`).emit("message", {
+            message: newMessage.message,
+            sender: newMessage.sender
+        });
         return response.json({
             id: newMessage._id,
             reciever: newMessage.reciever,

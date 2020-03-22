@@ -70,13 +70,14 @@ export class UserService {
      */
     public async userLogin(userInfo: LoginInfo): Promise<any> {
         const user = await this.getUserByEmail(userInfo.email);
-        if (!user) throw new HttpException(400, 'Неверный логин или пароль');
+        if (!user) throw new HttpException(400, "Неверный логин или пароль");
         const isPasswordCorrect = bcrypt.compareSync(userInfo.password, user.password);
         if (isPasswordCorrect) {
             const token = await this.jwtService.signUser(user);
             return {
                 token,
-                email: user.email
+                email: user.email,
+                id: user._id
             };
         }
         throw new HttpException(400, "Неверный логин или пароль");
