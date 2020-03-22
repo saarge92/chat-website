@@ -6,10 +6,14 @@ import mongoose from "mongoose";
 import "dotenv/config"
 import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
-import {authMiddlewareWebsocket} from "./middleware/websockets/auth-middleware";
 import messageRoutes from "./routes/message/message-route";
 import {WebsocketServer} from "./websocket/websocket.server";
 
+/**
+ * Server application for application
+ * Contains basic information for starting web-server
+ * @copyright Serdar Durdyev
+ */
 class ServerApplication {
     private app: Express;
     private PORT = process.env.PORT;
