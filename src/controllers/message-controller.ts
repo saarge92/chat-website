@@ -6,6 +6,7 @@ import {AuthMiddleware} from "../middleware/auth-middleware";
 import {Inject} from "@decorators/di";
 import {MessageService} from "../services/message-service";
 import {WebsocketServer} from "../websocket/websocket.server";
+import {IMessageService} from "../interfaces/i-message-service";
 
 /**
  * Controller for sending messages users each others
@@ -13,7 +14,7 @@ import {WebsocketServer} from "../websocket/websocket.server";
  */
 @Controller("/messages", [AuthMiddleware])
 export class MessageController {
-    constructor(@Inject(MessageService) private readonly messageService: MessageService) {
+    constructor(@Inject(MessageService) private readonly messageService: IMessageService) {
     }
 
     /**
