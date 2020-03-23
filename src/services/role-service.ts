@@ -5,9 +5,10 @@ import HttpException from "../exceptions/http-exception";
 import {Schema, Types} from "mongoose";
 import {UserRoleDto} from "../dto/user-role.dto";
 import {UserModel} from "../models/user-model";
+import {IRoleService} from "../interfaces/i-role-service";
 
 @Injectable()
-export class RoleService {
+export class RoleService implements IRoleService {
     /**
      * Create role in database
      * @param roleInfo object with data about role creation

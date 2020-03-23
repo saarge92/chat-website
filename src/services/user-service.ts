@@ -6,17 +6,20 @@ import HttpException from "../exceptions/http-exception";
 import {LoginInfo} from "../dto/login-info";
 import {JwtService} from "./jwt-service";
 import {RoleService} from "./role-service";
+import {IUserService} from "../interfaces/i-user-service";
+import {IJwtService} from "../interfaces/IJwtService";
+import {IRoleService} from "../interfaces/i-role-service";
 
 /**
  * Service for working with users
  * @copyright Picasso
  */
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
     private readonly salt: number = 10;
 
-    constructor(@Inject(JwtService) private readonly jwtService: JwtService,
-                @Inject(RoleService) private readonly roleService: RoleService) {
+    constructor(@Inject(JwtService) private readonly jwtService: IJwtService,
+                @Inject(RoleService) private readonly roleService: IRoleService) {
     }
 
     /**

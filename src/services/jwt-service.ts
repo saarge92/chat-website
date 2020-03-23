@@ -4,13 +4,14 @@ import * as jwt from "jsonwebtoken"
 import "dotenv/config"
 import HttpException from "../exceptions/http-exception";
 import "dotenv/config"
+import {IJwtService} from "../interfaces/IJwtService";
 
 /**
  * Service class for working with tokens of users
  * @copyright Serdar Durdyev
  */
 @Injectable()
-export class JwtService {
+export class JwtService implements IJwtService {
 
     /**
      * Sign user and return token data
@@ -31,7 +32,7 @@ export class JwtService {
     public async getUserFromToken(token: string): Promise<IUser> {
         const userData: any = await jwt.verify(token, process.env.JWT_KEY as string, {issuer: process.env.JWT_ISSUER});
         if (!userData.email || !userData.id) throw new HttpException(401, "Неверные параметры токена");
-        const user = UserModel.findOne({$and:[{_id: userData.id, email: userData.email}]}).lean()
+        const user = UserModel.findOne({$and: [{_id: userData.id, email: userData.email}]}).lean()
         return user;
     }
 

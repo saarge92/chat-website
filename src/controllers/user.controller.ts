@@ -1,11 +1,11 @@
 import {Controller, Post} from "@decorators/express";
-import express, {json} from "express";
+import express from "express";
 import {transformAndValidate} from "class-transformer-validator";
 import {UserInfo} from "../dto/user-info.dto";
-import {UserService} from "../services/user-service";
-import {Inject} from "@decorators/di";
+import {Container, Inject, Injectable} from "@decorators/di";
 import {LoginInfo} from "../dto/login-info";
-
+import {IUserService} from "../interfaces/i-user-service";
+import {UserService} from "../services/user-service";
 
 /**
  * Controller for serving requests about users
@@ -13,7 +13,7 @@ import {LoginInfo} from "../dto/login-info";
  */
 @Controller("/user")
 export class UserController {
-    constructor(@Inject(UserService) private readonly userService: UserService) {
+    constructor(@Inject(UserService) private readonly userService: IUserService) {
     }
 
     /**
