@@ -3,6 +3,7 @@ import {NextFunction, Request, Response} from "express";
 import {Inject} from "@decorators/di";
 import {JwtService} from "../services/jwt-service";
 import HttpException from "../exceptions/http-exception";
+import {IJwtService} from "../interfaces/IJwtService";
 
 /**
  * Middleware for authenticated users only in system
@@ -11,7 +12,7 @@ import HttpException from "../exceptions/http-exception";
  */
 export class AuthMiddleware implements Middleware {
 
-    constructor(@Inject(JwtService) private readonly jwtService: JwtService) {
+    constructor(@Inject(JwtService) private readonly jwtService: IJwtService) {
     }
 
     /**

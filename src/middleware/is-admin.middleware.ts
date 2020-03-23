@@ -6,6 +6,8 @@ import {JwtService} from "../services/jwt-service";
 import {IUser} from "../models/user-model";
 import {RoleModel} from "../models/roles-model";
 import HttpException from "../exceptions/http-exception";
+import {IRoleService} from "../interfaces/i-role-service";
+import {IJwtService} from "../interfaces/IJwtService";
 
 /**
  * Middleware for executiong request for administrators
@@ -16,8 +18,8 @@ import HttpException from "../exceptions/http-exception";
 export class AdminMiddleware implements Middleware {
     protected roles: Array<string> = ["admin"];
 
-    constructor(@Inject(RoleService) private readonly roleService: RoleService,
-                @Inject(JwtService) private readonly jwtService: JwtService) {
+    constructor(@Inject(RoleService) private readonly roleService: IRoleService,
+                @Inject(JwtService) private readonly jwtService: IJwtService) {
     }
 
     /**

@@ -2,7 +2,7 @@ import {Controller, Post} from "@decorators/express";
 import express from "express";
 import {transformAndValidate} from "class-transformer-validator";
 import {UserInfo} from "../dto/user-info.dto";
-import {Container, Inject, Injectable} from "@decorators/di";
+import {Inject} from "@decorators/di";
 import {LoginInfo} from "../dto/login-info";
 import {IUserService} from "../interfaces/i-user-service";
 import {UserService} from "../services/user-service";
