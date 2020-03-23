@@ -15,13 +15,18 @@ export class WebsocketServer {
      */
     public static init() {
         this.server = socketServer.listen(9090);
+        this.initMiddlewares();
+    }
 
+    /**
+     * Init middleware for websocket server
+     */
+    private static initMiddlewares() {
         this.server.of("/chat").use(authMiddlewareWebsocket)
             .on("connection", (socket) => {
                 socket.emit("server", {data: "Hello from DMASTERS"})
                 const userData = socket.handshake.query["user-data"];
                 socket.join(`private-chat-${userData.id}`)
-            })
-
+            });
     }
 }
