@@ -8,6 +8,7 @@ import errorMiddleware from "./middleware/error.middleware";
 import rolesRoutes from "./routes/user/roles";
 import messageRoutes from "./routes/message/message-route";
 import {WebsocketServer} from "./websocket/websocket.server";
+import roomRoutes from "./routes/room/room";
 
 /**
  * Server application for application
@@ -33,6 +34,7 @@ class ServerApplication {
         this.app.use("/api/", userRoutes);
         this.app.use("/api/", rolesRoutes);
         this.app.use("/api/", messageRoutes)
+        this.app.use("/api/", roomRoutes);
         this.app.use(errorMiddleware);
         this.app.use("*", (request: express.Request, response: express.Response) => {
             response.json({message: "Not Found"}).status(404);

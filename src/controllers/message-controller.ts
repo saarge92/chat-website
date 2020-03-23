@@ -39,4 +39,10 @@ export class MessageController {
             created_at: newMessage.created_at
         }).status(200)
     }
+
+    @Post("/room/:id")
+    public async sendMessageToRoom(request:Request,response:Response)
+    {
+        
+    }
 }
