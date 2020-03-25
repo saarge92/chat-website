@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  application:
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    command: npm run start:prod
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+      - MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    ports:
+      - 27016:27017

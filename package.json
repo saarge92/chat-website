@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "tsc-watch --onSuccess \"nodemon dist/main.js\"",
-    "start:prod": "nodemon dist/main.js",
+    "start:prod": "node dist/main.js",
+    "build": "tsc",
     "test": "jest"
   },
   "keywords": [],
