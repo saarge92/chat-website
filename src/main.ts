@@ -42,7 +42,7 @@ class ServerApplication {
     }
 
     private mongooseConnect() {
-        mongoose.Promise = global.Promise;
+        mongoose.Promise = Promise;
         // @ts-ignore
         mongoose.connect(this.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
             console.log("Mongoose connected")

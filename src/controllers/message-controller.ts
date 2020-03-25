@@ -27,11 +27,13 @@ export class MessageController {
         const message = await transformAndValidate(MessageDto, request.body).catch((error) => {
             return response.json({message: error}).status(400);
         });
+
         const newMessage = await this.messageService.sendMessage(message as MessageDto, request.app.locals.user._id);
         WebsocketServer.server.of("/chat").to(`private-chat-${newMessage.sender}`).emit("message", {
             message: newMessage.message,
             sender: newMessage.sender
         });
+
         return response.json({
             id: newMessage._id,
             reciever: newMessage.reciever,
@@ -41,8 +43,7 @@ export class MessageController {
     }
 
     @Post("/room/:id")
-    public async sendMessageToRoom(request:Request,response:Response)
-    {
-        
+    public async sendMessageToRoom(request: Request, response: Response) {
+
     }
 }

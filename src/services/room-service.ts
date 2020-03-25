@@ -37,4 +37,13 @@ export class RoomService implements IRoomService {
     public async roomExists(id: string): Promise<boolean> {
         return (await this.getRoomInfoById(id)) != null;
     }
+
+    /**
+     * Delete room by id
+     * @param id Id of requested room for delete
+     */
+    public async deleteRoom(id: string) {
+        const isDeletedInfo = await RoomModel.deleteOne({_id: id});
+        return isDeletedInfo;
+    }
 }

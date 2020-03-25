@@ -10,4 +10,6 @@ export interface IRoomService {
     createRoom(roomDto: CreateRoomDto, idUser: string): Promise<IRoom>;
 
     getRoomInfoById(id: string): Promise<IRoom>;
+
+    deleteRoom(id: string);
 }

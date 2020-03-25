@@ -1,4 +1,4 @@
-import {Controller, Post} from "@decorators/express";
+import {Controller, Delete, Params, Post, Response as ResponseRequest} from "@decorators/express";
 import {Request, Response} from "express";
 import {transformAndValidate} from "class-transformer-validator";
 import {CreateRoomDto} from "../dto/create-room-dto";
@@ -32,5 +32,16 @@ export class RoomController {
 
         return response.json({id: createdRoom._id, created_at: createdRoom.created_at, creator: createdRoom.creator})
             .status(200);
+    }
+
+    /**
+     * Delete room by administrator or owner of the room
+     * @param id Id of deleting room
+     * @param response ResponseRequest for user
+     */
+    @Delete("/:id")
+    public async deleteRoom(@Params("id")id: string, @ResponseRequest() response: Response) {
+        const isDeleted: any = await this.roomService.deleteRoom(id);
+        return response.json({isDeleted: isDeleted.deletedCount > 0}).status(200);
     }
 }
