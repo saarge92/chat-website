@@ -3,6 +3,7 @@ import {IMessage, MessageModel} from "../models/message.model";
 import {Injectable} from "@decorators/di";
 import {IMessageService} from "../interfaces/i-message-service";
 import {WebsocketServer} from "../websocket/websocket.server";
+import {Types} from "mongoose";
 
 /**
  * Service class for sending messages for system
@@ -18,8 +19,8 @@ export class MessageService implements IMessageService {
      */
     public async sendMessage(messageDto: MessageDto, sender: string): Promise<IMessage> {
         const createdMessage = await MessageModel.create({
-            sender,
-            receiver: messageDto.to_id,
+            sender: Types.ObjectId(sender),
+            reciever: Types.ObjectId(messageDto.to_id),
             message: messageDto.message
         });
 
