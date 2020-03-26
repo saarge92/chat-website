@@ -21,8 +21,8 @@ export interface IUser extends Document {
     password: string,
     updated_at: Date,
     _id: string,
-    roles?: Array<IRole>,
-    interests?: Array<IInterest>
+    roles: Array<IRole>,
+    interests: Array<IInterest>
 }
 
 // @ts-ignore
