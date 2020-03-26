@@ -29,10 +29,17 @@ export class AdminMiddleware implements Middleware {
      * @param next Next function pass request approach
      */
     public async use(request: express.Request, response: express.Response, next: express.NextFunction): Promise<void> {
-        const userData: IUser = await this.jwtService.parseTokenFromHeader(request.headers.authorization as string);
-        const hasRoles = await this.checkRolesUser(userData);
-        if (!hasRoles) throw new HttpException(401, "Отсутствие прав на выполняемое действия");
-        next();
+        const user: IUser = request.app.locals.user;
+        if (!user) {
+            const userData: IUser = await this.jwtService.parseTokenFromHeader(request.headers.authorization as string);
+            const hasRoles = await this.checkRolesUser(userData);
+            if (!hasRoles) throw new HttpException(401, "Отсутствие прав на выполняемое действия");
+            next();
+        } else {
+            const hasRoles = await this.checkRolesUser(user);
+            if (!hasRoles) throw new HttpException(401, "Отсутствие прав на выполняемое действия");
+            next();
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import {IMessageService} from "../interfaces/i-message-service";
 import {IUser} from "../models/user-model";
 import {MessageRoomService} from "../services/message-room.service";
 import {MessageRoomDto} from "../dto/message-room-dto";
+import {AdminMiddleware} from "../middleware/is-admin.middleware";
 
 /**
  * Controller for sending messages users each others
@@ -47,7 +48,7 @@ export class MessageController {
      * @param request Request with body of message
      * @param response Response of result sended message
      */
-    @Post("/room/:id")
+    @Post("/room/:id",[AdminMiddleware])
     public async sendMessageToRoom(@Params("id") roomId: string, @RequestDecorator() request: Request, @ResponseDecorator() response: Response) {
         const currentUser: IUser = request.app.locals.user;
         const messageToRoom = await transformAndValidate(MessageRoomDto, request.body).catch((error) => {
