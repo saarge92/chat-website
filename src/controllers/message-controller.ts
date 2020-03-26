@@ -1,12 +1,14 @@
-import {Controller, Post} from "@decorators/express";
+import {Controller, Params, Response as ResponseDecorator, Post, Request as RequestDecorator} from "@decorators/express";
 import {Request, Response} from "express";
 import {transformAndValidate} from "class-transformer-validator";
 import {MessageDto} from "../dto/message-dto";
 import {AuthMiddleware} from "../middleware/auth-middleware";
 import {Inject} from "@decorators/di";
 import {MessageService} from "../services/message-service";
-import {WebsocketServer} from "../websocket/websocket.server";
 import {IMessageService} from "../interfaces/i-message-service";
+import {IUser} from "../models/user-model";
+import {MessageRoomService} from "../services/message-room.service";
+import {MessageRoomDto} from "../dto/message-room-dto";
 
 /**
  * Controller for sending messages users each others
@@ -14,7 +16,9 @@ import {IMessageService} from "../interfaces/i-message-service";
  */
 @Controller("/messages", [AuthMiddleware])
 export class MessageController {
-    constructor(@Inject(MessageService) private readonly messageService: IMessageService) {
+    constructor(@Inject(MessageService) private readonly messageService: IMessageService,
+                @Inject(MessageRoomService) private readonly messageRoomService: MessageRoomService
+    ) {
     }
 
     /**
@@ -29,10 +33,6 @@ export class MessageController {
         });
 
         const newMessage = await this.messageService.sendMessage(message as MessageDto, request.app.locals.user._id);
-        WebsocketServer.server.of("/chat").to(`private-chat-${newMessage.sender}`).emit("message", {
-            message: newMessage.message,
-            sender: newMessage.sender
-        });
 
         return response.json({
             id: newMessage._id,
@@ -42,8 +42,19 @@ export class MessageController {
         }).status(200)
     }
 
+    /**
+     * Send message by user into room
+     * @param request Request with body of message
+     * @param response Response of result sended message
+     */
     @Post("/room/:id")
-    public async sendMessageToRoom(request: Request, response: Response) {
+    public async sendMessageToRoom(@Params("id") roomId: string, @RequestDecorator() request: Request, @ResponseDecorator() response: Response) {
+        const currentUser: IUser = request.app.locals.user;
+        const messageToRoom = await transformAndValidate(MessageRoomDto, request.body).catch((error) => {
+            response.json({...messageToRoom}).status(400)
+        }) as MessageRoomDto;
 
+        const message = await this.messageRoomService.sendMessageToRoom(currentUser, messageToRoom, roomId);
+        return response.json(message).status(200);
     }
 }

@@ -12,4 +12,4 @@ export interface IRole extends Document {
 }
 
 // @ts-ignore
-export const RoleModel = mongoose.model<IRole>('roles', RoleSchema);
+export const RoleModel = mongoose.model<IRole>("roles", RoleSchema);

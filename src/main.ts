@@ -9,6 +9,7 @@ import rolesRoutes from "./routes/user/roles";
 import messageRoutes from "./routes/message/message-route";
 import {WebsocketServer} from "./websocket/websocket.server";
 import roomRoutes from "./routes/room/room";
+import interestRouter from "./routes/interest-route";
 
 /**
  * Server application for application
@@ -35,6 +36,7 @@ class ServerApplication {
         this.app.use("/api/", rolesRoutes);
         this.app.use("/api/", messageRoutes)
         this.app.use("/api/", roomRoutes);
+        this.app.use("/api", interestRouter);
         this.app.use(errorMiddleware);
         this.app.use("*", (request: express.Request, response: express.Response) => {
             response.json({message: "Not Found"}).status(404);

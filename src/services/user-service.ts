@@ -73,6 +73,7 @@ export class UserService implements IUserService {
      */
     public async userLogin(userInfo: LoginInfo): Promise<any> {
         const user = await this.getUserByEmail(userInfo.email);
+        console.log(user)
         if (!user) throw new HttpException(400, "Неверный логин или пароль");
         const isPasswordCorrect = bcrypt.compareSync(userInfo.password, user.password);
         if (isPasswordCorrect) {

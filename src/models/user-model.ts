@@ -1,4 +1,6 @@
 import mongoose, {Schema, Types} from "mongoose";
+import {IRole} from "./roles-model";
+import {IInterest} from "./interest.model";
 
 const UserSchema: Schema = new Schema<any>({
     email: {required: true, unique: true, type: String},
@@ -6,7 +8,10 @@ const UserSchema: Schema = new Schema<any>({
     password: {required: true, type: String},
     updated_at: {required: true, type: Date, default: Date.now},
     roles: [{
-        type: String
+        type: Schema.Types.ObjectId, ref: "roles", required: false
+    }],
+    interests: [{
+        type: Schema.Types.ObjectId, ref: "interests", required: false
     }]
 });
 
@@ -15,8 +20,9 @@ export interface IUser extends Document {
     created_at: Date,
     password: string,
     updated_at: Date,
-    _id: Types.ObjectId,
-    roles: Array<string>
+    _id: string,
+    roles?: Array<IRole>,
+    interests?: Array<IInterest>
 }
 
 // @ts-ignore

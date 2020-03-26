@@ -2,6 +2,7 @@ import {MessageDto} from "../dto/message-dto";
 import {IMessage, MessageModel} from "../models/message.model";
 import {Injectable} from "@decorators/di";
 import {IMessageService} from "../interfaces/i-message-service";
+import {WebsocketServer} from "../websocket/websocket.server";
 
 /**
  * Service class for sending messages for system
@@ -16,10 +17,16 @@ export class MessageService implements IMessageService {
      * @param sender Who sent this message
      */
     public async sendMessage(messageDto: MessageDto, sender: string): Promise<IMessage> {
-        return await MessageModel.create({
+        const createdMessage = await MessageModel.create({
             sender,
             receiver: messageDto.to_id,
             message: messageDto.message
         });
+
+        WebsocketServer.server.of("/chat").to(`private-chat-${createdMessage.reciever}`).emit("message", {
+            message: createdMessage.message,
+            sender: createdMessage.sender
+        });
+        return createdMessage;
     }
 }
