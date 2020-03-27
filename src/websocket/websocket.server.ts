@@ -2,6 +2,7 @@ import * as socketServer from "socket.io";
 import "dotenv/config";
 import {authMiddlewareWebsocket} from "../middleware/websockets/auth-middleware";
 import {Socket} from "socket.io";
+import socketRedis from "socket.io-redis";
 
 /**
  * Websocket server for serving request in real-time
@@ -15,7 +16,7 @@ export class WebsocketServer {
      * Init websocket server connection & apply middlewares
      */
     public static init() {
-        this.server = socketServer.listen(9090);
+        this.server = socketServer.listen(9090, {adapter: socketRedis({host: process.env.REDIS_HOST, port: process.env.REDIS_PORT})});
         this.initMiddlewares();
 
     }

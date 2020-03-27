@@ -5,6 +5,7 @@ import "dotenv/config"
 import HttpException from "../exceptions/http-exception";
 import "dotenv/config"
 import {IJwtService} from "../interfaces/IJwtService";
+import {JsonWebTokenError, TokenExpiredError} from "jsonwebtoken";
 
 /**
  * Service class for working with tokens of users
@@ -30,10 +31,16 @@ export class JwtService implements IJwtService {
      * @param token Bearer token from header
      */
     public async getUserFromToken(token: string): Promise<IUser> {
-        const userData: any = await jwt.verify(token, process.env.JWT_KEY as string, {issuer: process.env.JWT_ISSUER});
-        if (!userData.email || !userData.id) throw new HttpException(401, "Неверные параметры токена");
-        const user = UserModel.findOne({$and: [{_id: userData.id, email: userData.email}]}).lean()
-        return user;
+        try {
+            const userData: any = await jwt.verify(token, process.env.JWT_KEY as string, {issuer: process.env.JWT_ISSUER})
+            if (!userData.email || !userData.id) throw new HttpException(401, "Неверные параметры токена");
+            const user = UserModel.findOne({$and: [{_id: userData.id, email: userData.email}]}).lean()
+            return user;
+        } catch (error) {
+            if (error instanceof TokenExpiredError) throw new HttpException(400, "Срок действия токена истек");
+            if (error instanceof JsonWebTokenError) throw new HttpException(400, "Ошибка сигнатуры токена");
+            throw new HttpException(400, error.message || "Ошибка токена");
+        }
     }
 
     /**
