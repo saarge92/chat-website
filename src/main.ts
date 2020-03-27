@@ -13,6 +13,7 @@ import interestRouter from "./routes/interest-route";
 import cluster from "cluster";
 import {cpus} from "os";
 import compression from "compression";
+import adminJobRoutes from "./routes/admin/jobs.index";
 
 /**
  * Server application for application
@@ -41,6 +42,7 @@ class ServerApplication {
         this.app.use("/api/", messageRoutes)
         this.app.use("/api/", roomRoutes);
         this.app.use("/api", interestRouter);
+        this.app.use("/api/", adminJobRoutes);
         this.app.use(errorMiddleware);
         this.app.use("*", (request: express.Request, response: express.Response) => {
             response.json({message: "Not Found"}).status(404);
