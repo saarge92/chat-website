@@ -7,6 +7,9 @@ import {emailConfig} from "../constants/emailConfig";
 // @ts-ignore
 export const emailJob = new Queue("email-job", redisSettings);
 
+/**
+ * Job will proccess email sending messaging via redis cluster
+ */
 emailJob.process(async (job, done) => {
     const emailData: EmailDto = job.data;
     await nodeMailer.createTransport(emailConfig).sendMail({
@@ -14,6 +17,8 @@ emailJob.process(async (job, done) => {
         subject: emailData.subject ? emailData.subject : "",
         to: emailData.email,
         text: emailData.body
+    }).catch((error) => {
+        done(error, {});
     })
     done(null);
 })

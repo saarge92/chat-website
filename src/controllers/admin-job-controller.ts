@@ -25,7 +25,7 @@ export class AdminJobController {
     @Post("/users")
     public async startUsersCountJob(request: Request, response: Response) {
         const job = await countUsersQueue.add();
-        return response.json({job: job.id}).status(200)
+        return response.json({id: job.id, name: job.queue.name}).status(200)
     }
 
     /**
