@@ -14,6 +14,7 @@ import cluster from "cluster";
 import {cpus} from "os";
 import compression from "compression";
 import adminJobRoutes from "./routes/admin/jobs.index";
+import fileUpload from "express-fileupload"
 
 /**
  * Server application for application
@@ -32,6 +33,7 @@ class ServerApplication {
     private initMiddleware() {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({extended: true}));
+        this.app.use(fileUpload());
         this.app.use(cors());
         this.app.use(compression());
     }
