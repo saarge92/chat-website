@@ -10,6 +10,9 @@ import messageRoutes from "./routes/message/message-route";
 import {WebsocketServer} from "./websocket/websocket.server";
 import roomRoutes from "./routes/room/room";
 import interestRouter from "./routes/interest-route";
+import cluster from "cluster";
+import {cpus} from "os";
+import compression from "compression";
 
 /**
  * Server application for application
@@ -29,6 +32,7 @@ class ServerApplication {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(cors());
+        this.app.use(compression());
     }
 
     private initRoutes() {
@@ -52,13 +56,22 @@ class ServerApplication {
     }
 
     public start() {
-        this.app.listen(this.PORT, () => {
-            console.log("Server Started")
-        });
-        this.initMiddleware();
-        this.initRoutes();
-        this.mongooseConnect();
-        WebsocketServer.init();
+        // Try to run application in cluster mode
+        const cpuCount = cpus().length;
+        if (cluster.isMaster) {
+            for (let i = 0; i < cpuCount; i++) cluster.fork();
+            cluster.on("exit", (worker) => {
+                cluster.fork();
+            })
+        } else {
+            this.app.listen(this.PORT, () => {
+                console.log("Server Started")
+            });
+            this.initMiddleware();
+            this.initRoutes();
+            this.mongooseConnect();
+            WebsocketServer.init();
+        }
     }
 }
 
