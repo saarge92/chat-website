@@ -8,6 +8,11 @@ import { IRoomService } from "../interfaces/i-room-service";
  */
 @Injectable()
 export class RoomService implements IRoomService {
+
+    /**
+     * Get all room in our system
+     * @returns {Promise<IRoom[]>} Список доступных комнат в системе
+     */
     async getRooms(): Promise<IRoom[]> {
         return await RoomModel.find().lean();
     }

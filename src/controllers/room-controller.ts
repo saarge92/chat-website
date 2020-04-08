@@ -45,6 +45,11 @@ export class RoomController {
         return response.json({ isDeleted: isDeleted.deletedCount > 0 }).status(200);
     }
 
+    /**
+     * Get all rooms in out system
+     * @param request Http Request 
+     * @param response Http response
+     */
     @Get("/")
     public async getRooms(request: Request, response: Response) {
         const rooms = await this.roomService.getRooms();
