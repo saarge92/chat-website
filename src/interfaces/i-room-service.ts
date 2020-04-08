@@ -1,5 +1,5 @@
-import {CreateRoomDto} from "../dto/create-room-dto";
-import {IRoom} from "../models/room.model";
+import { CreateRoomDto } from "../dto/create-room-dto";
+import { IRoom } from "../models/room.model";
 
 /**
  * Interface for business logic
@@ -12,4 +12,6 @@ export interface IRoomService {
     getRoomInfoById(id: string): Promise<IRoom>;
 
     deleteRoom(id: string);
+
+    getRooms(): Promise<Array<IRoom>>;
 }

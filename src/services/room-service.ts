@@ -1,13 +1,16 @@
-import {Injectable} from "@decorators/di";
-import {CreateRoomDto} from "../dto/create-room-dto";
-import {IRoom, RoomModel} from "../models/room.model";
-import {IRoomService} from "../interfaces/i-room-service";
+import { Injectable } from "@decorators/di";
+import { CreateRoomDto } from "../dto/create-room-dto";
+import { IRoom, RoomModel } from "../models/room.model";
+import { IRoomService } from "../interfaces/i-room-service";
 
 /**
  * Room service for creating room in our system
  */
 @Injectable()
 export class RoomService implements IRoomService {
+    async getRooms(): Promise<IRoom[]> {
+        return await RoomModel.find().lean();
+    }
 
     /**
      * Create room in database by user
@@ -26,7 +29,7 @@ export class RoomService implements IRoomService {
      * @param id Id of requested room
      */
     public async getRoomInfoById(id: string): Promise<IRoom> {
-        return RoomModel.findOne({_id: id}).lean();
+        return RoomModel.findOne({ _id: id }).lean();
     }
 
     /**
@@ -43,7 +46,7 @@ export class RoomService implements IRoomService {
      * @param id Id of requested room for delete
      */
     public async deleteRoom(id: string) {
-        const isDeletedInfo = await RoomModel.deleteOne({_id: id});
+        const isDeletedInfo = await RoomModel.deleteOne({ _id: id });
         return isDeletedInfo;
     }
 }
