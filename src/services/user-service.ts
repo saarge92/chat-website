@@ -30,7 +30,7 @@ export class UserService implements IUserService {
         const userExists = await this.userExistByEmail(userInfo.email);
         let createdUser: any = {};
         if (!userExists) {
-            const userRole = await this.roleService.getRoleByName("admin");
+            const userRole = await this.roleService.getRoleByName("user");
             if (userRole) createdUser = await UserModel.create({
                 email: userInfo.email,
                 password: bcrypt.hashSync(userInfo.password, this.salt),
@@ -40,10 +40,12 @@ export class UserService implements IUserService {
                 email: userInfo.email,
                 password: bcrypt.hashSync(userInfo.password, this.salt)
             });
+            const token = await this.jwtService.signUser(createdUser);
             return {
                 email: createdUser.email,
                 id: createdUser._id,
-                created_at: createdUser.created_at
+                created_at: createdUser.created_at,
+                token
             };
         }
         throw new HttpException(400, "Пользователь уже существует");

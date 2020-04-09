@@ -1,12 +1,14 @@
-import mongoose, {Types} from "mongoose";
+import mongoose, { Types, Schema } from "mongoose";
+import { IUser } from "./user-model";
+import { IInterest } from "./interest.model";
 
 const RoomSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    created_at: {type: Date, required: true, default: Date.now},
-    updated_at: {type: Date, required: true, default: Date.now},
-    creator: {type: String, required: true},
+    name: { type: String, required: true },
+    created_at: { type: Date, required: true, default: Date.now },
+    updated_at: { type: Date, required: true, default: Date.now },
+    creator: { type: Schema.Types.ObjectId, ref: 'users', required: true },
     interests: [{
-        type: String
+        type: Schema.Types.ObjectId, ref: 'interests', required: false,
     }]
 })
 
@@ -15,8 +17,8 @@ export interface IRoom extends Document {
     created_at: Date,
     name: string,
     updated_at: string,
-    creator: string,
-    interests: Array<string>
+    creator: IUser,
+    interests: Array<IInterest>
 }
 
 // @ts-ignore
