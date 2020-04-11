@@ -6,26 +6,28 @@ import {JwtService} from "../../src/services/jwt-service";
 import {UserInfo} from "../../src/dto/user-info.dto";
 import * as faker from "faker";
 import {RoleService} from "../../src/services/role-service";
+import "dotenv/config";
 
+/**
+ * Unit testing for user service
+ */
 describe("User Service TEST", () => {
-    let userService;
+    let userService: UserService;
 
     beforeEach(() => {
-        jest.setTimeout(10000);
         const jwtService = new JwtService();
         userService = new UserService(jwtService, new RoleService())
     });
 
-    test("should return createdUser", async () => {
+    test("registerUser should return data with token", (done) => {
         const userDto: UserInfo = {
             email: faker.email,
             password: faker.password
         }
-        const result = await userService.registerUser(userDto);
-        expect(result).toBeDefined();
+        const result = userService.registerUser(userDto);
+        expect(result).resolves.toBeDefined();
+        expect(result).resolves.toBeCalled();
+        done();
     });
 
-    beforeAll((done) => {
-        done(); // calling it
-    });
 })

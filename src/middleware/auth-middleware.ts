@@ -31,7 +31,7 @@ export class AuthMiddleware implements Middleware {
 
             next();
         } catch (error) {
-            throw new HttpException(error.status || 500, error.message || "Что-то пошло не так")
+            next(new HttpException(error.status || 500, error.message || "Что-то пошло не так"))
         }
     }
 
