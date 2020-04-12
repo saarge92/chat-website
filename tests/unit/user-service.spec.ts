@@ -19,23 +19,32 @@ describe("User Service TEST", () => {
         userService = Container.get<UserService>(UserService);
     });
 
-    it("registerUser should return data with token", (done) => {
+    it("RegisterUser should return data with token", (done) => {
         const userDto: UserInfo = {
             email: faker.email,
             password: faker.password
         }
         const result = userService.registerUser(userDto);
+
         expect(result).resolves.toBeDefined();
         expect(result).resolves.toBeCalled();
         done();
     });
 
-    it("getUserByEmail should return user", async () => {
+    it("GetUserByEmail should return user", async () => {
         const randomUser = UserModel.find().limit(1).findOne();
         const resultGetUserByEmail = userService.getUserByEmail((randomUser).email);
 
         expect(randomUser).resolves.toBeInstanceOf(UserModel);
         expect(resultGetUserByEmail).resolves.toBe(randomUser);
     });
+
+    it("UserExistByEmail should return true", () => {
+        const randomUser = UserModel.find().limit(1).findOne();
+
+        const isExists = userService.userExistByEmail((randomUser).email);
+
+        expect(isExists).resolves.toBe(true);
+    })
 
 })
