@@ -58,7 +58,11 @@ module.exports = {
     // globalTeardown: undefined,
 
     // A set of global variables that need to be available in all test environments
-    // globals: {},
+    globals: {
+        'ts-jest': {
+            babelConfig: true
+          }
+    },
 
     // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
     // maxWorkers: "50%",
@@ -102,7 +106,7 @@ module.exports = {
     // resetMocks: false,
 
     // Reset the module registry before running each individual test
-    // resetModules: false,
+    //resetModules: false,
 
     // A path to a custom resolver
     // resolver: undefined,
@@ -158,7 +162,7 @@ module.exports = {
     // testResultsProcessor: undefined,
 
     // This option allows use of a custom test runner
-    // testRunner: "jasmine2",
+    testRunner: "jasmine2",
 
     // This option sets the URL for the jsdom environment. It is reflected in properties such as location.href
     // testURL: "http://localhost",
@@ -186,5 +190,5 @@ module.exports = {
     // watchPathIgnorePatterns: [],
 
     // Whether to use watchman for file crawling
-     watchman: true,
+    watchman: true,
 };
