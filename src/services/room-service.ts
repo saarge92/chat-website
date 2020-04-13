@@ -23,7 +23,8 @@ export class RoomService implements IRoomService {
                 created_at: room.created_at
             }
         });
-
+    }
+    
     /**
      * Create room in database by user
      * @param roomDto Object with data about room

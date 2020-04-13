@@ -17,7 +17,7 @@ import adminJobRoutes from "./routes/admin/jobs.index";
 import fileUpload from "express-fileupload"
 import bluebird from "bluebird";
 import swagger from "swagger-ui-express";
-import {swaggerDocument} from "./swagger.config";
+import { swaggerDocument } from "./swagger.config";
 
 /**
  * Server application for application
@@ -42,7 +42,9 @@ class ServerApplication {
     }
 
     private initRoutes() {
-        this.app.use("/api-docs/", swagger.serve, swagger.setup(swaggerDocument));
+        this.app.use("/api-docs/", swagger.serve, swagger.setup(swaggerDocument, {
+            explorer: true,
+        }));
         this.app.use("/api/", userRoutes);
         this.app.use("/api/", rolesRoutes);
         this.app.use("/api/", messageRoutes)

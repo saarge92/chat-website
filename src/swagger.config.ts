@@ -12,6 +12,21 @@ export const swaggerDocument = {
         },
     },
     host: `http://localhost:${process.env.PORT}`,
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "description": "Token authorization",
+                "type": "apiKey",
+                name: "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    security: [
+        {
+            "bearerAuth": []
+        }
+    ],
     tags: [
         {
             name: 'room',
@@ -30,6 +45,29 @@ export const swaggerDocument = {
                 tags: ["interest"],
                 produces: [
                     "application/json"
+                ],
+                responses: {
+                    200: {
+                        description: "List of available interests"
+                    }
+                }
+            }
+        },
+
+        "/api/interest": {
+            post: {
+                summary: "POST new interest by user",
+                description: "Method for posting new interest in out system",
+                tags: ["interest"],
+                consumes: ["application/json"],
+                produces: ["application/json"],
+                parameters: [
+                    {
+                        name: "name",
+                        in: "body",
+                        required: true,
+                        type: "string"
+                    },
                 ],
                 responses: {
                     200: {
