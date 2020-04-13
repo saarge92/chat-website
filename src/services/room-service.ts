@@ -13,9 +13,16 @@ export class RoomService implements IRoomService {
      * Get all room in our system
      * @returns {Promise<IRoom[]>} Список доступных комнат в системе
      */
-    async getRooms(): Promise<IRoom[]> {
-        return await RoomModel.find().lean();
-    }
+    async getRooms(): Promise<any[]> {
+        const listRooms = await RoomModel.find().lean();
+        return listRooms.map((room: IRoom) => {
+            return {
+                id: room._id,
+                interests: room.interests,
+                name: room.name,
+                created_at: room.created_at
+            }
+        });
 
     /**
      * Create room in database by user

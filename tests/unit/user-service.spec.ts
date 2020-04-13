@@ -1,12 +1,13 @@
 // tslint:disable-next-line:no-reference
 ///<reference path="../../node_modules/@types/jest/index.d.ts"/>
 
-import { UserService } from "../../src/services/user-service";
-import { UserInfo } from "../../src/dto/user-info.dto";
+import {UserService} from "../../src/services/user-service";
+import {UserInfo} from "../../src/dto/user-info.dto";
 import * as faker from "faker";
 import "dotenv/config";
-import { UserModel } from "../../src/models/user-model";
-import { Container } from "@decorators/di";
+import {UserModel} from "../../src/models/user-model";
+import {Container} from "@decorators/di";
+import * as bluebird from "bluebird";
 
 /**
  * Unit testing for user service class
@@ -16,6 +17,7 @@ describe("User Service TEST", () => {
     let userService: UserService;
 
     beforeEach(() => {
+        global.Promise = bluebird.Promise;
         userService = Container.get<UserService>(UserService);
     });
 
@@ -39,12 +41,10 @@ describe("User Service TEST", () => {
         expect(resultGetUserByEmail).resolves.toBe(randomUser);
     });
 
-    it("UserExistByEmail should return true", () => {
-        const randomUser = UserModel.find().limit(1).findOne();
-
-        const isExists = userService.userExistByEmail((randomUser).email);
-
-        expect(isExists).resolves.toBe(true);
+    it("UserExistByEmail should return true", async () => {
+        expect.assertions(1);
+        const userModel = UserModel.find().limit(1).exec()
+        return expect(userModel).resolves.toBe(123)
     })
 
 })
