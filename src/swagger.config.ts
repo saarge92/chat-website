@@ -12,11 +12,22 @@ export const swaggerDocument = {
         },
     },
     host: `http://localhost:${process.env.PORT}`,
+    tags: [
+        {
+            name: 'room',
+            description: 'Methods for rooms API'
+        },
+        {
+            name: "interest",
+            description: "Methods for interests API"
+        }
+    ],
     paths: {
         "/api/interest/": {
             get: {
                 summary: "Get all interests in our website",
                 description: "Method returns list of all interests in our website",
+                tags: ["interest"],
                 produces: [
                     "application/json"
                 ],
@@ -31,6 +42,7 @@ export const swaggerDocument = {
         "/api/room/": {
             get: {
                 summary: "Get all rooms in our system",
+                tags: ["room"],
                 description: "Returns lists of chat rooms in our system",
                 produces: [
                     "application/json"
