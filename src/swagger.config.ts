@@ -61,14 +61,23 @@ export const swaggerDocument = {
                 tags: ["interest"],
                 consumes: ["application/json"],
                 produces: ["application/json"],
-                parameters: [
-                    {
-                        name: "name",
-                        in: "body",
-                        required: true,
-                        type: "string"
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["name"],
+                                properties: {
+                                    name: {
+                                        type: "string"
+                                    }
+                                }
+                            }
+                        }
                     },
-                ],
+
+                },
                 responses: {
                     200: {
                         description: "List of available interests"
