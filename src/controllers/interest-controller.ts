@@ -1,12 +1,13 @@
-import { Controller, Params, Post, Response as ResponseDecorator, Request as RequestDecorator, Get } from "@decorators/express";
-import { Request, Response } from "express";
-import { transformAndValidate } from "class-transformer-validator";
-import { CreateInterestDto } from "../dto/create-interest-dto";
-import { Inject } from "@decorators/di";
-import { InterestService } from "../services/interest-service";
-import { AuthMiddleware } from "../middleware/auth-middleware";
-import { IUser } from "../models/user-model";
-import { Schema, Types } from "mongoose";
+import {Controller, Params, Post, Response as ResponseDecorator, Request as RequestDecorator, Get, Delete} from "@decorators/express";
+import {Request, Response} from "express";
+import {transformAndValidate} from "class-transformer-validator";
+import {CreateInterestDto} from "../dto/create-interest-dto";
+import {Inject} from "@decorators/di";
+import {InterestService} from "../services/interest-service";
+import {AuthMiddleware} from "../middleware/auth-middleware";
+import {IUser} from "../models/user-model";
+import {Types} from "mongoose";
+import HttpException from "../exceptions/http-exception";
 
 /**
  * Controller for interests of user
@@ -27,14 +28,14 @@ export class InterestController {
     @Post("/", [AuthMiddleware])
     public async createInterest(request: Request, response: Response) {
         const createInterestDto = await transformAndValidate(CreateInterestDto, request.body).catch((error) => {
-            return response.status(400).json({ ...error });
+            return response.status(400).json({...error});
         }) as CreateInterestDto;
 
         const currentUser: IUser = request.app.locals.user;
         const createInterest = await this.interestService.createInterest(createInterestDto, Types.ObjectId(currentUser._id));
         await this.interestService.addUserToInterest(currentUser._id, createInterest._id);
 
-        return response.status(200).json({ id: createInterest._id, name: createInterest.name });
+        return response.status(200).json({id: createInterest._id, name: createInterest.name});
     }
 
     /**
@@ -45,10 +46,10 @@ export class InterestController {
      */
     @Post("/assign/:id", [AuthMiddleware])
     public async assignInterestForUser(@Params("id") interestId: string, @RequestDecorator() request: Request,
-        @ResponseDecorator() response: Response) {
+                                       @ResponseDecorator() response: Response) {
         const user = request.app.locals.user;
         const isUpdated = await this.interestService.tryAssignInterestForUser(user._id, interestId);
-        return response.json({ isUpdated }).status(200)
+        return response.json({isUpdated}).status(200)
     }
 
     /**
@@ -63,9 +64,23 @@ export class InterestController {
 
         const allInterests = await this.interestService.getInterests(perPage, currentPage)
             .catch(error => {
-                return response.status(500).json({ ...error })
+                return response.status(500).json({...error})
             });
 
         return response.status(200).json(allInterests);
+    }
+
+    /**
+     * Delete interest from database
+     * @param id Id of deleting interest
+     * @param response Response for deleted
+     */
+    @Delete("/:id")
+    public async deleteInterest(@Params("id") id: string, @ResponseDecorator() response: Response) {
+        if (!id) throw new HttpException(400, "Укажите id для удаления интереса");
+        await this.interestService.deleteInterest(id).catch((error) => {
+            return response.status(error.status || 400).json({message: error.message || "Что-то пошло не так, Проверьте id"});
+        });
+        return response.status(400).json({message: "Удаленно"});
     }
 }

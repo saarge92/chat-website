@@ -1,9 +1,10 @@
-import { Injectable } from "@decorators/di";
-import { IUser, UserModel } from "../models/user-model";
-import { IRoom } from "../models/room.model";
-import { CreateInterestDto } from "../dto/create-interest-dto";
-import { InterestModel } from "../models/interest.model";
-import { Types } from "mongoose";
+import {Injectable} from "@decorators/di";
+import {IUser, UserModel} from "../models/user-model";
+import {IRoom} from "../models/room.model";
+import {CreateInterestDto} from "../dto/create-interest-dto";
+import {InterestModel} from "../models/interest.model";
+import {Types} from "mongoose";
+import HttpException from "../exceptions/http-exception";
 
 
 /**
@@ -42,7 +43,7 @@ export class InterestService {
      * @param interestId InterestIdForCreation
      */
     public async addUserToInterest(userId: string, interestId: string) {
-        await UserModel.updateOne({ _id: userId }, { $push: { interests: Types.ObjectId(interestId) } })
+        await UserModel.updateOne({_id: userId}, {$push: {interests: Types.ObjectId(interestId)}})
     }
 
     /**
@@ -51,12 +52,12 @@ export class InterestService {
      * @param interestId Id of interest
      */
     public async tryAssignInterestForUser(userId: string, interestId: string): Promise<boolean> {
-        const user: IUser = await UserModel.findOne({ _id: userId }).populate("interests").exec();
+        const user: IUser = await UserModel.findOne({_id: userId}).populate("interests").exec();
         if (!user) return false;
 
         const intersectedUser = user.interests.filter((interest) => interest._id == interestId);
         if (intersectedUser.length <= 0) {
-            const isUpdatedInfo = await UserModel.updateOne({ _id: userId }, { $push: { interests: Types.ObjectId(interestId) } })
+            const isUpdatedInfo = await UserModel.updateOne({_id: userId}, {$push: {interests: Types.ObjectId(interestId)}})
             return isUpdatedInfo.n > 0;
         }
 
@@ -70,7 +71,8 @@ export class InterestService {
      */
     public async getInterests(perPage: number = 12, currentPage: number = 1) {
         let allInterests = await InterestModel.find()
-            .skip((currentPage - 1) * perPage).limit(parseInt(perPage.toString())).sort({ created_at: -1 });
+            // tslint:disable-next-line:radix
+            .skip((currentPage - 1) * perPage).limit(parseInt(perPage.toString())).sort({created_at: -1});
         allInterests = allInterests.map(interest => {
             return {
                 id: interest._id,
@@ -80,5 +82,15 @@ export class InterestService {
             }
         })
         return allInterests;
+    }
+
+    /**
+     * Delete interest from table
+     * @param id Id of interest
+     */
+    public async deleteInterest(id: string): Promise<void> {
+        const isValidObjectId = Types.ObjectId.isValid(id);
+        if (!isValidObjectId) throw new HttpException(400, "Укажите валидный id");
+        await InterestModel.deleteOne({_id: Types.ObjectId(id)}).exec();
     }
 }
