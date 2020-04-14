@@ -2,12 +2,14 @@ FROM node:10.19.0-alpine3.9
 
 WORKDIR /usr/app
 
-ADD package.json ./
-ADD tsconfig.json ./
+COPY package.json ./
+COPY tsconfig.json ./
+COPY .env ./
+ADD src ./src/
 
 RUN npm install
-RUN npm run build
+RUN npm install -g typescript@3.8.3
 
 EXPOSE 3000
 
-CMD ["npm","run","start:prod"]
+CMD ["npm","run","start:dev"]

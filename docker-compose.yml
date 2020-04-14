@@ -9,12 +9,18 @@ services:
       - "3000:3000"
     depends_on:
       - mongodb
-    command: npm run start:prod
+    command: npm run start:dev
 
   mongodb:
     image: mongo:latest
     environment:
-      - MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
-      - MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+      - MONGO_INITDB_ROOT_USERNAME:"${MONGO_USERNAME}"
+      - MONGO_INITDB_ROOT_PASSWORD:"${MONGO_PASSWORD}"
     ports:
       - 27016:27017
+
+  redis:
+    image: redis:latest
+    restart: on-failure
+    ports:
+      - 2828:6379

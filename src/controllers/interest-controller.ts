@@ -60,10 +60,12 @@ export class InterestController {
      */
     @Get("/")
     public async getAllInterests(request: Request, response: Response) {
-        const currentPage = request.query.currentPage ? request.query.currentPage : 1;
-        const perPage = request.query.perPage ? request.query.perPage : 12;
+        // tslint:disable-next-line:radix
+        const currentPage = request.query.currentPage ? parseInt(request.query.currentPage) : 1;
+        // tslint:disable-next-line:radix
+        const perPage = request.query.perPage ? parseInt(request.query.perPage) : 12;
 
-        const allInterests = await this.interestService.getInterests(perPage, currentPage)
+        const allInterests = await this.interestService.getInterests(12, 1)
             .catch(error => {
                 return response.status(500).json({...error})
             });
