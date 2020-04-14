@@ -8,7 +8,8 @@ const InterestSchema = new mongoose.Schema({
 
 export interface IInterest extends Document {
     _id: string,
-    name: string
+    name: string,
+    creator: Types.ObjectId
 }
 
 // @ts-ignore

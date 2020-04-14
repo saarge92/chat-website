@@ -4,7 +4,7 @@ import {IRole, RoleModel} from "../models/roles-model";
 import HttpException from "../exceptions/http-exception";
 import {Schema, Types} from "mongoose";
 import {UserRoleDto} from "../dto/user-role.dto";
-import {UserModel} from "../models/user-model";
+import {IUser, UserModel} from "../models/user-model";
 import {IRoleService} from "../interfaces/i-role-service";
 
 @Injectable()
@@ -66,5 +66,23 @@ export class RoleService implements IRoleService {
         if (!role) throw new HttpException(400, "Такой роли не существует в базе");
         const isUpdated = await UserModel.updateOne({_id: userRoleDto.user_id}, {$push: {roles: userRoleDto.role_id}}).lean();
         return isUpdated;
+    }
+
+    /**
+     * Check roles of user who performs requests
+     * @param user User perfoming request
+     */
+    public async checkRolesUser(user: IUser, roles: Array<string>): Promise<boolean> {
+        if (!user.roles) return false;
+
+        const rolesInTable: Array<IRole> = await RoleModel.find({name: {$in: [...roles]}}).lean();
+        const userRoles = user.roles as unknown as Array<string>;
+        if (!userRoles) return false;
+        const rolesIntersected = rolesInTable.filter(role => {
+            return userRoles.filter(userRole => {
+                return role._id.equals(userRole);
+            }).length > 0
+        })
+        return rolesIntersected.length > 0;
     }
 }

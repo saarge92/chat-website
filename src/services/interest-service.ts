@@ -2,7 +2,7 @@ import {Injectable} from "@decorators/di";
 import {IUser, UserModel} from "../models/user-model";
 import {IRoom} from "../models/room.model";
 import {CreateInterestDto} from "../dto/create-interest-dto";
-import {InterestModel} from "../models/interest.model";
+import {IInterest, InterestModel} from "../models/interest.model";
 import {Types} from "mongoose";
 import HttpException from "../exceptions/http-exception";
 
@@ -92,5 +92,15 @@ export class InterestService {
         const isValidObjectId = Types.ObjectId.isValid(id);
         if (!isValidObjectId) throw new HttpException(400, "Укажите валидный id");
         await InterestModel.deleteOne({_id: Types.ObjectId(id)}).exec();
+    }
+
+    /**
+     * Get interest by id
+     * @param id Id of requested
+     */
+    public async getInterestById(id: string): Promise<IInterest> {
+        const isValidObjectId = Types.ObjectId.isValid(id);
+        if (!isValidObjectId) throw new HttpException(400, "Укажите валидный id");
+        return InterestModel.findOne({_id: id}).lean();
     }
 }

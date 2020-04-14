@@ -1,6 +1,7 @@
 import {RoleInfo} from "../dto/role-info";
 import {IRole} from "../models/roles-model";
 import {UserRoleDto} from "../dto/user-role.dto";
+import {IUser} from "../models/user-model";
 
 /**
  * Interface for role service which contains
@@ -19,4 +20,6 @@ export interface IRoleService {
     findRoleById(id: string): Promise<IRole>;
 
     assignRoleToUser(userRoleDto: UserRoleDto): Promise<any>;
+
+    checkRolesUser(user: IUser, roles: Array<string>): Promise<boolean>;
 }

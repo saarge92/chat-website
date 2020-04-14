@@ -4,7 +4,6 @@ import {Inject, Injectable} from "@decorators/di";
 import {RoleService} from "../services/role-service";
 import {JwtService} from "../services/jwt-service";
 import {IUser} from "../models/user-model";
-import {RoleModel} from "../models/roles-model";
 import HttpException from "../exceptions/http-exception";
 import {IRoleService} from "../interfaces/i-role-service";
 import {IJwtService} from "../interfaces/IJwtService";
@@ -31,29 +30,17 @@ export class AdminMiddleware implements Middleware {
     public async use(request: express.Request, response: express.Response, next: express.NextFunction): Promise<void> {
         const user: IUser = request.app.locals.user;
         if (!user) {
-            const userData: IUser = await this.jwtService.parseTokenFromHeader(request.headers.authorization as string);
-            const hasRoles = await this.checkRolesUser(userData);
-            if (!hasRoles) throw new HttpException(401, "Отсутствие прав на выполняемое действия");
+            const userData: IUser = await this.jwtService.parseTokenFromHeader(request.headers.authorization as string)
+                .catch(error => next(error));
+
+            const hasRoles = await this.roleService.checkRolesUser(userData, this.roles).catch(error => next(error));
+
+            if (!hasRoles) next(new HttpException(401, "Отсутствие прав на выполняемое действия"));
             next();
         } else {
-            const hasRoles = await this.checkRolesUser(user);
-            if (!hasRoles) throw new HttpException(401, "Отсутствие прав на выполняемое действия");
+            const hasRoles = await this.roleService.checkRolesUser(user, this.roles);
+            if (!hasRoles) next(new HttpException(401, "Отсутствие прав на выполняемое действия"));
             next();
         }
-    }
-
-    /**
-     * Check roles of user who performs requests
-     * @param user User perfoming request
-     */
-    private async checkRolesUser(user: IUser): Promise<boolean> {
-        if (!user.roles) return false;
-
-        const roleInTable = await RoleModel.find({name: {$in: [...this.roles]}}).lean();
-        const userRoles = user.roles;
-
-        const result = roleInTable.filter((role) => userRoles.includes(role._id.toString()));
-        if (result.length <= 0) return false;
-        return true;
     }
 }

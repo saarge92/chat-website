@@ -21,7 +21,7 @@ export interface IUser extends Document {
     password: string,
     updated_at: Date,
     _id: string,
-    roles: Array<IRole>,
+    roles: Array<Types.ObjectId>,
     interests: Array<IInterest>
 }
 

@@ -27,7 +27,10 @@ export class RoleController {
         const roleInfo = await transformAndValidate<RoleInfo>(RoleInfo, request.body).catch((error) => {
             response.status(400).json({message: error})
         }) as RoleInfo;
-        const createdRole = await this.roleService.createRole(roleInfo);
+
+        const createdRole = await this.roleService.createRole(roleInfo)
+            .catch(error => response.status(error.status || 400).json({message: error.message || "Что-то пошло не так"}));
+
         return response.json({
             name: createdRole.name,
             id: createdRole._id,

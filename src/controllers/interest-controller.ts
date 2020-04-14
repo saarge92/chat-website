@@ -75,7 +75,7 @@ export class InterestController {
      * @param id Id of deleting interest
      * @param response Response for deleted
      */
-    @Delete("/:id")
+    @Delete("/:id",[AuthMiddleware])
     public async deleteInterest(@Params("id") id: string, @ResponseDecorator() response: Response) {
         if (!id) throw new HttpException(400, "Укажите id для удаления интереса");
         await this.interestService.deleteInterest(id).catch((error) => {
