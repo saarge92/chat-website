@@ -25,9 +25,11 @@ export class UserController {
     @Post("/")
     public async registerUser(request: express.Request, response: express.Response) {
         const userInfo = await transformAndValidate<UserInfo>(UserInfo, request.body).catch(error => {
-            response.status(400).json({message: error})
+            response.status(error.status).json({message: error})
         });
-        const createdUser = await this.userService.registerUser(userInfo as UserInfo);
+        const createdUser = await this.userService.registerUser(userInfo as UserInfo).catch(error => {
+            return response.status(error.status).json({message: error.message})
+        });
         return response.json({...createdUser}).status(200);
     }
 
@@ -41,7 +43,9 @@ export class UserController {
         const userInfo = await transformAndValidate(LoginInfo, request.body).catch(error => {
             response.status(400).json({message: error});
         });
-        const userData = await this.userService.userLogin(userInfo as LoginInfo);
+        const userData = await this.userService.userLogin(userInfo as LoginInfo).catch(error => {
+            response.status(400).json(error)
+        });
         return response.json(userData).status(200)
     }
 }

@@ -29,7 +29,7 @@ export class RoleController {
         }) as RoleInfo;
 
         const createdRole = await this.roleService.createRole(roleInfo)
-            .catch(error => response.status(error.status || 400).json({message: error.message || "Что-то пошло не так"}));
+            .catch(error => response.status(error.status || 400).json({message: error.message || "Что-то пошло не так"})) as any;
 
         return response.json({
             name: createdRole.name,

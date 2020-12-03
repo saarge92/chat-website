@@ -13,7 +13,7 @@ export class RoleService implements IRoleService {
      * Create role in database
      * @param roleInfo object with data about role creation
      */
-    public async createRole(roleInfo: RoleInfo) {
+    public async createRole(roleInfo: RoleInfo): Promise<IRole> {
         const isRoleExists = await this.isRoleExistedInDatabase(roleInfo.name);
         if (isRoleExists) throw new HttpException(400, "Роль в базе уже существует");
         const createdRole = await RoleModel.create({
